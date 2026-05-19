@@ -106,7 +106,7 @@
     }
 
     .opt {
-      padding: 15px 10px;
+      padding: 12px 10px;
       border: 2px solid #e0e0e0;
       border-radius: 14px;
       background: white;
@@ -116,6 +116,9 @@
       transition: border-color 0.15s, background 0.15s, transform 0.1s;
       color: #333;
       font-family: 'Segoe UI', sans-serif;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
     }
 
     .opt:hover:not(:disabled) {
@@ -137,12 +140,15 @@
     .opt-group .opt { width: 100%; }
 
     .opt-en-label {
-      font-size: 13px;
-      color: #888;
+      display: block;
+      font-size: 12px;
+      color: #999;
       font-weight: 400;
+      margin-top: 4px;
       letter-spacing: 0.3px;
-      font-family: 'Segoe UI', sans-serif;
     }
+    .opt.correct .opt-en-label,
+    .opt.wrong   .opt-en-label { color: rgba(255,255,255,0.8); }
 
     .speak-he-btn {
       background: #f5f5f5;
@@ -579,12 +585,8 @@
 
       const btn = document.createElement('button');
       btn.className = 'opt';
-      btn.textContent = opt.name;
+      btn.innerHTML = `${opt.name}<span class="opt-en-label">${opt.en}</span>`;
       btn.onclick = () => pick(btn, opt.name, q.correct.name, q.correct.en, q.correct.ph);
-
-      const enLabel = document.createElement('div');
-      enLabel.className = 'opt-en-label';
-      enLabel.textContent = opt.en;
 
       const heBtn = document.createElement('button');
       heBtn.className = 'speak-he-btn';
@@ -592,7 +594,6 @@
       heBtn.onclick = () => { if (!isMuted) speakHebrew(opt.name); };
 
       group.appendChild(btn);
-      group.appendChild(enLabel);
       group.appendChild(heBtn);
       optDiv.appendChild(group);
     });
