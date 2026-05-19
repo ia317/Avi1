@@ -147,16 +147,15 @@
       width: 100%;
     }
     .opt-speak-icon {
-      font-size: 15px;
-      opacity: 0.55;
+      font-size: 16px;
+      opacity: 1;
       flex-shrink: 0;
-      padding: 2px 4px;
+      padding: 3px 5px;
       border-radius: 6px;
-      transition: opacity 0.15s, transform 0.1s;
+      background: rgba(0,0,0,0.06);
+      transition: background 0.15s, transform 0.1s;
     }
-    .opt-speak-icon:hover { opacity: 1; transform: scale(1.15); }
-    .opt.correct .opt-speak-icon,
-    .opt.wrong   .opt-speak-icon { opacity: 0.75; }
+    .opt-speak-icon:active { transform: scale(0.92); background: rgba(0,0,0,0.15); }
 
     .opt-en-label {
       display: block;
