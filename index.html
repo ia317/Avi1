@@ -1,0 +1,657 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>חידון פירות</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background: linear-gradient(135deg, #f7971e, #ffd200);
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .card {
+      background: white;
+      border-radius: 24px;
+      padding: 36px;
+      width: 500px;
+      max-width: 95vw;
+      box-shadow: 0 24px 64px rgba(0,0,0,0.18);
+      text-align: center;
+    }
+
+    .top-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 18px;
+      font-size: 15px;
+      color: #888;
+    }
+
+    .mute-btn {
+      background: #f5f5f5;
+      border: 1.5px solid #e0e0e0;
+      border-radius: 50%;
+      width: 36px;
+      height: 36px;
+      font-size: 18px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: background 0.15s, transform 0.1s;
+    }
+    .mute-btn:hover { background: #ffe0b2; border-color: #f7971e; transform: scale(1.1); }
+    .mute-btn.muted { background: #fdecea; border-color: #f44336; }
+
+    .score-badge {
+      background: #fff3cd;
+      color: #d68000;
+      font-weight: 700;
+      padding: 4px 14px;
+      border-radius: 20px;
+      font-size: 15px;
+    }
+
+    h1 {
+      font-size: 26px;
+      color: #222;
+      margin-bottom: 18px;
+    }
+
+    .fruit-wrap {
+      width: 100%;
+      height: 270px;
+      border-radius: 16px;
+      overflow: hidden;
+      background: #f3f3f3;
+      margin-bottom: 18px;
+      border: 2px solid #eee;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .fruit-wrap img {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+      padding: 8px;
+    }
+
+    .emoji-fallback {
+      font-size: 110px;
+      display: none;
+    }
+
+    .question {
+      font-size: 19px;
+      color: #555;
+      margin-bottom: 16px;
+      font-weight: 600;
+    }
+
+    .options {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 12px;
+      margin-bottom: 16px;
+    }
+
+    .opt {
+      padding: 15px 10px;
+      border: 2px solid #e0e0e0;
+      border-radius: 14px;
+      background: white;
+      font-size: 17px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: border-color 0.15s, background 0.15s, transform 0.1s;
+      color: #333;
+      font-family: 'Segoe UI', sans-serif;
+    }
+
+    .opt:hover:not(:disabled) {
+      border-color: #f7971e;
+      background: #fff8ee;
+      transform: translateY(-2px);
+    }
+
+    .opt.correct  { background: #4caf50; border-color: #4caf50; color: white; }
+    .opt.wrong    { background: #f44336; border-color: #f44336; color: white; }
+    .opt:disabled { cursor: default; }
+
+    .opt-group {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 6px;
+    }
+    .opt-group .opt { width: 100%; }
+
+    .speak-he-btn {
+      background: #f5f5f5;
+      border: 1.5px solid #e0e0e0;
+      border-radius: 20px;
+      padding: 4px 12px;
+      font-size: 13px;
+      cursor: pointer;
+      color: #666;
+      transition: background 0.15s, transform 0.1s;
+      white-space: nowrap;
+    }
+    .speak-he-btn:hover  { background: #ffe0b2; border-color: #f7971e; color: #e07b00; transform: scale(1.05); }
+    .speak-he-btn:active { transform: scale(0.97); }
+
+    .feedback { display: none; }
+    .english-name { display: none; }
+
+    /* Answer popup */
+    .popup-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.45);
+      z-index: 100;
+      align-items: center;
+      justify-content: center;
+    }
+    .popup-overlay.show { display: flex; }
+
+    .popup-box {
+      background: white;
+      border-radius: 24px;
+      padding: 36px 48px;
+      text-align: center;
+      box-shadow: 0 16px 60px rgba(0,0,0,0.35);
+      transform: scale(0.5);
+      opacity: 0;
+      transition: transform 0.25s cubic-bezier(0.34,1.56,0.64,1), opacity 0.2s ease;
+      min-width: 240px;
+    }
+    .popup-overlay.show .popup-box {
+      transform: scale(1);
+      opacity: 1;
+    }
+
+    /* Confetti */
+    .confetti-piece {
+      position: fixed;
+      width: 10px;
+      height: 14px;
+      top: -20px;
+      border-radius: 2px;
+      opacity: 0;
+      z-index: 999;
+      animation: confetti-fall 1.4s ease-in forwards;
+      pointer-events: none;
+    }
+    @keyframes confetti-fall {
+      0%   { opacity: 1; transform: translateY(0)      rotateZ(0deg)   scaleX(1); }
+      80%  { opacity: 1; }
+      100% { opacity: 0; transform: translateY(100vh)  rotateZ(720deg) scaleX(-1); }
+    }
+
+    .popup-icon {
+      font-size: 56px;
+      line-height: 1;
+      margin-bottom: 10px;
+    }
+    .popup-result {
+      font-size: 22px;
+      font-weight: 800;
+      margin-bottom: 6px;
+    }
+    .popup-result.ok  { color: #4caf50; }
+    .popup-result.err { color: #f44336; }
+    .popup-hebrew {
+      font-size: 28px;
+      font-weight: 700;
+      color: #222;
+      margin-bottom: 4px;
+    }
+    .popup-english {
+      font-size: 22px;
+      color: #888;
+      letter-spacing: 0.5px;
+    }
+    .popup-phonetic-row {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      margin-top: 4px;
+    }
+    .popup-phonetic {
+      font-size: 18px;
+      color: #bbb;
+    }
+    .speak-btn {
+      background: #f0f0f0;
+      border: none;
+      border-radius: 50%;
+      width: 36px;
+      height: 36px;
+      font-size: 18px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: background 0.15s, transform 0.1s;
+      flex-shrink: 0;
+    }
+    .speak-btn:hover { background: #e0e0e0; transform: scale(1.1); }
+    .speak-btn:active { transform: scale(0.95); }
+
+    .timer-bar-wrap {
+      height: 5px;
+      background: #eee;
+      border-radius: 4px;
+      margin-top: 14px;
+      overflow: hidden;
+      display: none;
+    }
+
+    .timer-bar {
+      height: 100%;
+      background: #f7971e;
+      width: 100%;
+      transition: width 1.5s linear;
+    }
+
+    /* End screen */
+    #end {
+      display: none;
+      flex-direction: column;
+      align-items: center;
+      gap: 14px;
+    }
+
+    .big-score {
+      font-size: 80px;
+      font-weight: 800;
+      color: #f7971e;
+      line-height: 1;
+    }
+
+    .result-msg { font-size: 22px; color: #444; }
+
+    .play-again {
+      padding: 13px 42px;
+      background: #4caf50;
+      color: white;
+      border: none;
+      border-radius: 30px;
+      font-size: 17px;
+      font-weight: 700;
+      cursor: pointer;
+      margin-top: 8px;
+      transition: background 0.2s;
+      font-family: 'Segoe UI', sans-serif;
+    }
+    .play-again:hover { background: #388e3c; }
+  </style>
+</head>
+<body>
+<div class="card">
+  <div class="top-bar">
+    <span id="q-num">שאלה 1 / 10</span>
+    <button class="mute-btn" id="mute-btn" onclick="toggleMute()" title="השתק / הפעל">🔊</button>
+    <span class="score-badge">⭐ <span id="score">0</span></span>
+  </div>
+
+  <h1>חידון פירות</h1>
+
+  <div id="game">
+    <div class="fruit-wrap">
+      <img id="fruit-img" src="" alt="פרי" onerror="this.style.display='none'; document.getElementById('emoji-fb').style.display='flex'">
+      <div class="emoji-fallback" id="emoji-fb"></div>
+    </div>
+
+    <p class="question">איזה פרי זה?</p>
+    <div class="options" id="options"></div>
+    <p class="feedback" id="feedback"></p>
+    <p class="english-name" id="english-name"></p>
+    <div class="timer-bar-wrap" id="timer-wrap">
+      <div class="timer-bar" id="timer-bar"></div>
+    </div>
+  </div>
+
+  <!-- Answer popup -->
+  <div class="popup-overlay" id="popup">
+    <div class="popup-box">
+      <div class="popup-icon" id="popup-icon"></div>
+      <div class="popup-result" id="popup-result"></div>
+      <div class="popup-hebrew" id="popup-hebrew"></div>
+      <div class="popup-english" id="popup-english"></div>
+      <div class="popup-phonetic-row">
+        <div class="popup-phonetic" id="popup-phonetic"></div>
+        <button class="speak-btn" id="speak-btn" title="האזן לביטוי" onclick="speakWord()">🔊</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="end">
+    <p class="result-msg" id="result-msg"></p>
+    <div class="big-score" id="final-score"></div>
+    <p style="color:#999; font-size:15px">מתוך 15</p>
+    <button class="play-again" onclick="restart()">שחק שוב</button>
+  </div>
+</div>
+
+<script>
+  const fruits = [
+    { name: "תפוח",     en: "Apple",        ph: "אפל",          emoji: "🍎", img: "images/apple.jpg" },
+    { name: "בננה",     en: "Banana",       ph: "בננה",         emoji: "🍌", img: "images/banana.jpg" },
+    { name: "תפוז",     en: "Orange",       ph: "אורנג'",       emoji: "🍊", img: "images/orange.jpg" },
+    { name: "תות שדה",  en: "Strawberry",   ph: "סטרוברי",      emoji: "🍓", img: "images/strawberry.jpg" },
+    { name: "אבטיח",    en: "Watermelon",   ph: "ווטרמלון",     emoji: "🍉", img: "images/watermelon.jpg" },
+    { name: "אננס",     en: "Pineapple",    ph: "פיינאפל",      emoji: "🍍", img: "images/pineapple.jpg" },
+    { name: "מנגו",     en: "Mango",        ph: "מנגו",         emoji: "🥭", img: "images/mango.jpg" },
+    { name: "לימון",    en: "Lemon",        ph: "למון",         emoji: "🍋", img: "images/lemon.jpg" },
+    { name: "דובדבן",   en: "Cherry",       ph: "צ'רי",         emoji: "🍒", img: "images/cherry.jpg" },
+    { name: "ענבים",    en: "Grapes",       ph: "גריפס",        emoji: "🍇", img: "images/grapes.jpg" },
+    { name: "אפרסק",    en: "Peach",        ph: "פיץ'",         emoji: "🍑", img: "images/peach.jpg" },
+    { name: "קיווי",    en: "Kiwi",         ph: "קיווי",        emoji: "🥝", img: "images/kiwi.jpg" },
+    { name: "אגס",      en: "Pear",         ph: "פר",           emoji: "🍐", img: "images/pear.jpg" },
+    { name: "רימון",    en: "Pomegranate",  ph: "פומגרנט",      emoji: "🍈", img: "images/pomegranate.jpg" },
+    { name: "אבוקדו",   en: "Avocado",      ph: "אבוקדו",       emoji: "🥑", img: "images/avocado.jpg" },
+    { name: "שזיף",     en: "Plum",         ph: "פלאם",         emoji: "🟣", img: "images/plum.jpg" },
+    { name: "אוכמניות", en: "Blueberry",    ph: "בלוברי",       emoji: "🫐", img: "images/blueberry.jpg" },
+    { name: "פטל",      en: "Raspberry",    ph: "ראספברי",      emoji: "🍓", img: "images/raspberry.jpg" },
+    { name: "משמש",     en: "Apricot",      ph: "אפריקוט",      emoji: "🟠", img: "images/apricot.jpg" },
+    { name: "תמר",      en: "Date",         ph: "דייט",         emoji: "🌴", img: "images/date.jpg" },
+    { name: "תאנה",     en: "Fig",          ph: "פיג",          emoji: "🫐", img: "images/fig.jpg" },
+    { name: "צבר",      en: "Prickly Pear", ph: "פריקלי פר",    emoji: "🌵", img: "images/pricklypear.jpg" },
+    { name: "שסק",      en: "Loquat",       ph: "לוקוואט",      emoji: "🍊", img: "images/loquat.jpg" },
+    { name: "אפרסמון",  en: "Persimmon",    ph: "פרסימון",      emoji: "🟠", img: "images/persimmon.jpg" },
+    { name: "גויאבה",   en: "Guava",        ph: "גואבה",        emoji: "🍈", img: "images/guava.jpg" },
+    { name: "אשכולית",  en: "Grapefruit",   ph: "גריפרוט",      emoji: "🍊", img: "images/grapefruit.jpg" },
+    { name: "נקטרינה",  en: "Nectarine",    ph: "נקטרין",       emoji: "🍑", img: "images/nectarine.jpg" },
+  ];
+
+  const TOTAL = 15;
+  const DELAY = 8000;
+  let questions = [], idx = 0, score = 0;
+
+  let isMuted = false;
+  function toggleMute() {
+    isMuted = !isMuted;
+    const btn = document.getElementById('mute-btn');
+    btn.textContent = isMuted ? '🔇' : '🔊';
+    btn.classList.toggle('muted', isMuted);
+    if (isMuted) {
+      window.speechSynthesis.cancel();
+      cheerAudio.pause();
+      cheerAudio.currentTime = 0;
+      cheerAudio.volume = 1;
+    }
+  }
+
+  function shuffle(arr) { return [...arr].sort(() => Math.random() - 0.5); }
+
+  const femaleNames = ['Samantha','Jenny','Aria','Michelle','Monica','Karen','Moira','Tessa','Victoria','Zira','Susan','Eva','Allison','Ava'];
+
+  function getVoice() {
+    const voices = window.speechSynthesis.getVoices();
+    const us = voices.filter(v => v.lang === 'en-US');
+    return us.find(v => femaleNames.some(n => v.name.includes(n))) || us[0] || voices[0];
+  }
+  // Trigger voice list load
+  window.speechSynthesis.onvoiceschanged = () => {};
+  window.speechSynthesis.getVoices();
+
+  let currentWord = '';
+  let currentHebWord = '';
+  let popupTimer  = null;
+
+  function doSpeak(text, voice, lang, rate, onEnd) {
+    window.speechSynthesis.cancel();
+    requestAnimationFrame(() => requestAnimationFrame(() => {
+      const utt  = new SpeechSynthesisUtterance(text);
+      utt.voice  = voice;
+      utt.lang   = lang;
+      utt.rate   = rate;
+      utt.pitch  = 1.05;
+      utt.volume = 1;
+      if (onEnd) utt.onend = onEnd;
+      window.speechSynthesis.speak(utt);
+    }));
+  }
+
+  function speakSequence(hebrewWord, englishWord) {
+    fadeOutCheer(() => {
+      // Speak Hebrew name
+      doSpeak(hebrewWord, getHebrewFemaleVoice(), 'he-IL', 0.78, null);
+
+      // Wait long enough for any Hebrew fruit name to finish, then speak English
+      const heDelay = 900 + hebrewWord.length * 320;
+      setTimeout(() => {
+        doSpeak(englishWord, getVoice(), 'en-US', 0.75, null);
+      }, heDelay);
+    });
+  }
+
+  // Called by popup 🔊 button — replays English only
+  function speakWord() {
+    if (!currentWord || isMuted) return;
+    doSpeak(currentWord, getVoice(), 'en-US', 0.75, null);
+    clearTimeout(popupTimer);
+    popupTimer = setTimeout(closePopup, 5000);
+  }
+
+  const cheerAudio = new Audio('cheer.mp3');
+  cheerAudio.preload = 'auto';
+  let cheerFadeTimer = null;
+
+  function playCheer() {
+    try {
+      clearTimeout(cheerFadeTimer);
+      cheerAudio.currentTime = 0;
+      cheerAudio.volume = 1;
+      cheerAudio.play();
+    } catch (e) {}
+  }
+
+  function fadeOutCheer(onDone) {
+    let vol = cheerAudio.volume;
+    const iv = setInterval(() => {
+      vol = Math.max(0, vol - 0.07);
+      cheerAudio.volume = vol;
+      if (vol <= 0) {
+        clearInterval(iv);
+        cheerAudio.pause();
+        cheerAudio.currentTime = 0;
+        cheerAudio.volume = 1;
+        if (onDone) onDone();
+      }
+    }, 40);
+  }
+
+  function launchConfetti() {
+    const colors = ['#f7971e','#ffd200','#4caf50','#2196f3','#e91e63','#9c27b0','#ff5722','#00bcd4'];
+    const count  = 90;
+    for (let i = 0; i < count; i++) {
+      const el = document.createElement('div');
+      el.className = 'confetti-piece';
+      el.style.left            = Math.random() * 100 + 'vw';
+      el.style.background      = colors[Math.floor(Math.random() * colors.length)];
+      el.style.width           = (8 + Math.random() * 8) + 'px';
+      el.style.height          = (12 + Math.random() * 10) + 'px';
+      el.style.animationDelay  = (Math.random() * 0.6) + 's';
+      el.style.animationDuration = (1.1 + Math.random() * 0.8) + 's';
+      document.body.appendChild(el);
+      el.addEventListener('animationend', () => el.remove());
+    }
+  }
+
+  function getHebrewFemaleVoice() {
+    const voices = window.speechSynthesis.getVoices();
+    const heVoices = voices.filter(v => v.lang === 'he-IL' || v.lang === 'he' || v.lang.startsWith('he'));
+    // Known female Hebrew voices across platforms
+    const femaleNames = ['Carmit', 'Hadas', 'Tamar', 'Yael', 'Miriam', 'Tali', 'Hila', 'Ronit'];
+    return heVoices.find(v => femaleNames.some(n => v.name.includes(n)))
+        || heVoices.find(v => !['Asaf', 'Avri', 'Yoav', 'Moshe'].some(n => v.name.includes(n)))
+        || heVoices[0]
+        || null;
+  }
+
+  function speakHebrew(word) {
+    window.speechSynthesis.cancel();
+    requestAnimationFrame(() => requestAnimationFrame(() => {
+      const utt  = new SpeechSynthesisUtterance(word);
+      utt.voice  = getHebrewFemaleVoice();
+      utt.lang   = 'he-IL';
+      utt.rate   = 0.78;
+      utt.pitch  = 1.1;
+      utt.volume = 1;
+      window.speechSynthesis.speak(utt);
+    }));
+  }
+
+  // Keep Chrome's speech engine alive between questions
+  setInterval(() => {
+    if (!window.speechSynthesis.speaking) {
+      window.speechSynthesis.pause();
+      window.speechSynthesis.resume();
+    }
+  }, 8000);
+
+  function closePopup() {
+    window.speechSynthesis.cancel();
+    const popup = document.getElementById('popup');
+    popup.classList.remove('show');
+    setTimeout(nextQ, 200);
+  }
+
+  function buildQuestions() {
+    questions = shuffle(fruits).slice(0, TOTAL).map(correct => {
+      const distractors = shuffle(fruits.filter(f => f.name !== correct.name)).slice(0, 2);
+      return { correct, en: correct.en, options: shuffle([correct, ...distractors]) };
+    });
+  }
+
+  function renderQuestion() {
+    const q = questions[idx];
+    const img = document.getElementById('fruit-img');
+    const emojiEl = document.getElementById('emoji-fb');
+
+    img.style.display = 'block';
+    emojiEl.style.display = 'none';
+    img.src = q.correct.img;
+    emojiEl.textContent = q.correct.emoji;
+
+    document.getElementById('q-num').textContent = `שאלה ${idx + 1} / ${TOTAL}`;
+    document.getElementById('feedback').textContent = '';
+    document.getElementById('feedback').className = 'feedback';
+    document.getElementById('timer-wrap').style.display = 'none';
+
+    const optDiv = document.getElementById('options');
+    optDiv.innerHTML = '';
+    q.options.forEach(opt => {
+      const group = document.createElement('div');
+      group.className = 'opt-group';
+
+      const btn = document.createElement('button');
+      btn.className = 'opt';
+      btn.textContent = opt.name;
+      btn.onclick = () => pick(btn, opt.name, q.correct.name, q.correct.en, q.correct.ph);
+
+      const heBtn = document.createElement('button');
+      heBtn.className = 'speak-he-btn';
+      heBtn.textContent = '🔊';
+      heBtn.onclick = () => { if (!isMuted) speakHebrew(opt.name); };
+
+      group.appendChild(btn);
+      group.appendChild(heBtn);
+      optDiv.appendChild(group);
+    });
+  }
+
+  function pick(btn, chosen, correct, correctEn, correctPh) {
+    document.querySelectorAll('.opt').forEach(b => b.disabled = true);
+
+    const isCorrect = chosen === correct;
+    if (isCorrect) {
+      btn.classList.add('correct');
+      score++;
+      document.getElementById('score').textContent = score;
+      launchConfetti();
+      if (!isMuted) playCheer();
+    } else {
+      btn.classList.add('wrong');
+      document.querySelectorAll('.opt').forEach(b => {
+        if (b.textContent === correct) b.classList.add('correct');
+      });
+    }
+
+    // Show popup
+    document.getElementById('popup-icon').textContent   = isCorrect ? '✅' : '❌';
+    document.getElementById('popup-result').textContent = isCorrect ? 'נכון!' : 'לא נכון';
+    document.getElementById('popup-result').className   = 'popup-result ' + (isCorrect ? 'ok' : 'err');
+    document.getElementById('popup-hebrew').textContent  = correct;
+    document.getElementById('popup-english').textContent = correctEn;
+    document.getElementById('popup-phonetic').textContent = correctPh;
+    currentWord    = correctEn;
+    currentHebWord = correct;
+
+    const popup = document.getElementById('popup');
+    popup.classList.add('show');
+
+    if (isCorrect) {
+      if (!isMuted) setTimeout(() => speakSequence(correct, correctEn), 600);
+    } else {
+      if (!isMuted) setTimeout(() => {
+        doSpeak(correct, getHebrewFemaleVoice(), 'he-IL', 0.78, null);
+        const heDelay = 900 + correct.length * 320;
+        setTimeout(() => doSpeak(correctEn, getVoice(), 'en-US', 0.75, null), heDelay);
+      }, 500);
+    }
+
+    clearTimeout(popupTimer);
+    popupTimer = setTimeout(closePopup, DELAY);
+  }
+
+  function nextQ() {
+    idx++;
+    if (idx >= TOTAL) {
+      showEnd();
+    } else {
+      renderQuestion();
+    }
+  }
+
+  function showEnd() {
+    document.getElementById('game').style.display = 'none';
+    const end = document.getElementById('end');
+    end.style.display = 'flex';
+    document.getElementById('final-score').textContent = score;
+    let msg;
+    if (score === TOTAL)      msg = '🎉 ציון מושלם!';
+    else if (score >= 8)      msg = '🌟 כל הכבוד!';
+    else if (score >= 5)      msg = '🙂 לא רע!';
+    else                      msg = '🍎 כדאי להתאמן!';
+    document.getElementById('result-msg').textContent = msg;
+  }
+
+  function restart() {
+    score = 0; idx = 0;
+    document.getElementById('score').textContent = 0;
+    document.getElementById('game').style.display = 'block';
+    document.getElementById('end').style.display = 'none';
+    buildQuestions();
+    renderQuestion();
+  }
+
+  buildQuestions();
+  renderQuestion();
+</script>
+</body>
+</html>
