@@ -139,30 +139,35 @@
     }
     .opt-group .opt { width: 100%; }
 
+    .opt-main-row {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      width: 100%;
+    }
+    .opt-speak-icon {
+      font-size: 15px;
+      opacity: 0.55;
+      flex-shrink: 0;
+      padding: 2px 4px;
+      border-radius: 6px;
+      transition: opacity 0.15s, transform 0.1s;
+    }
+    .opt-speak-icon:hover { opacity: 1; transform: scale(1.15); }
+    .opt.correct .opt-speak-icon,
+    .opt.wrong   .opt-speak-icon { opacity: 0.75; }
+
     .opt-en-label {
       display: block;
       font-size: 12px;
       color: #999;
       font-weight: 400;
-      margin-top: 4px;
+      margin-top: 3px;
       letter-spacing: 0.3px;
     }
     .opt.correct .opt-en-label,
     .opt.wrong   .opt-en-label { color: rgba(255,255,255,0.8); }
-
-    .speak-he-btn {
-      background: #f5f5f5;
-      border: 1.5px solid #e0e0e0;
-      border-radius: 20px;
-      padding: 4px 12px;
-      font-size: 13px;
-      cursor: pointer;
-      color: #666;
-      transition: background 0.15s, transform 0.1s;
-      white-space: nowrap;
-    }
-    .speak-he-btn:hover  { background: #ffe0b2; border-color: #f7971e; color: #e07b00; transform: scale(1.05); }
-    .speak-he-btn:active { transform: scale(0.97); }
 
     .feedback { display: none; }
     .english-name { display: none; }
@@ -580,22 +585,16 @@
     const optDiv = document.getElementById('options');
     optDiv.innerHTML = '';
     q.options.forEach(opt => {
-      const group = document.createElement('div');
-      group.className = 'opt-group';
-
       const btn = document.createElement('button');
       btn.className = 'opt';
-      btn.innerHTML = `${opt.name}<span class="opt-en-label">${opt.en}</span>`;
+      btn.innerHTML = `<span class="opt-main-row"><span>${opt.name}</span><span class="opt-speak-icon">🔊</span></span><span class="opt-en-label">${opt.en}</span>`;
+      btn.querySelector('.opt-speak-icon').addEventListener('click', e => {
+        e.stopPropagation();
+        if (!isMuted) speakHebrew(opt.name);
+      });
       btn.onclick = () => pick(btn, opt.name, q.correct.name, q.correct.en, q.correct.ph);
 
-      const heBtn = document.createElement('button');
-      heBtn.className = 'speak-he-btn';
-      heBtn.textContent = '🔊';
-      heBtn.onclick = () => { if (!isMuted) speakHebrew(opt.name); };
-
-      group.appendChild(btn);
-      group.appendChild(heBtn);
-      optDiv.appendChild(group);
+      optDiv.appendChild(btn);
     });
   }
 
