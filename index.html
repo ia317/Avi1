@@ -300,11 +300,11 @@
 
     .dedication {
       text-align: center;
-      color: rgba(255,255,255,0.85);
-      font-size: 15px;
-      margin-top: 18px;
+      color: #bbb;
+      font-size: 13px;
+      margin-top: 10px;
+      margin-bottom: 4px;
       font-style: italic;
-      text-shadow: 0 1px 3px rgba(0,0,0,0.2);
     }
   </style>
 </head>
@@ -326,6 +326,7 @@
 
     <p class="question">איזה פרי זה?</p>
     <div class="options" id="options"></div>
+    <p class="dedication">מוקדש לבעלי האהוב ❤️</p>
     <p class="feedback" id="feedback"></p>
     <p class="english-name" id="english-name"></p>
     <div class="timer-bar-wrap" id="timer-wrap">
@@ -354,8 +355,6 @@
     <button class="play-again" onclick="restart()">שחק שוב</button>
   </div>
 </div>
-
-<p class="dedication">מוקדש לבעלי האהוב ❤️</p>
 
 <script>
   const fruits = [
