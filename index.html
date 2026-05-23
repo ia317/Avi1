@@ -360,7 +360,7 @@
   </div>
 
   <!-- Answer popup -->
-  <div class="popup-overlay" id="popup">
+  <div class="popup-overlay" id="popup" onclick="clearTimeout(popupTimer); closePopup();">
     <div class="popup-box">
       <div class="popup-icon" id="popup-icon"></div>
       <div class="popup-result" id="popup-result"></div>
