@@ -359,7 +359,7 @@
 <div class="card">
   <div class="top-bar">
     <span id="q-num">שאלה 1 / 10</span>
-    <button class="mute-btn" id="mute-btn" onclick="toggleMute()">🔊 <span id="mute-label">צליל</span></button>
+    <button class="mute-btn" id="mute-btn" onclick="toggleMute()">🔊 <span id="mute-label">צליל / Sound</span></button>
     <span class="score-badge">✅ <span id="score">0</span>/<span id="score-total">15</span></span>
   </div>
 
@@ -445,7 +445,7 @@
     isMuted = !isMuted;
     const btn = document.getElementById('mute-btn');
     btn.classList.toggle('muted', isMuted);
-    document.getElementById('mute-label').textContent = isMuted ? 'שקט' : 'צליל';
+    document.getElementById('mute-label').textContent = isMuted ? 'שקט / Silence' : 'צליל / Sound';
     btn.childNodes[0].textContent = isMuted ? '🔇 ' : '🔊 ';
     if (isMuted) {
       window.speechSynthesis.cancel();
