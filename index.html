@@ -100,7 +100,7 @@
 
     .options {
       display: grid;
-      grid-template-columns: 1fr 1fr 1fr;
+      grid-template-columns: 1fr 1fr;
       gap: 12px;
       margin-bottom: 16px;
     }
@@ -578,7 +578,7 @@
 
   function buildQuestions() {
     questions = shuffle(fruits).slice(0, TOTAL).map(correct => {
-      const distractors = shuffle(fruits.filter(f => f.name !== correct.name)).slice(0, 2);
+      const distractors = shuffle(fruits.filter(f => f.name !== correct.name)).slice(0, 3);
       return { correct, en: correct.en, options: shuffle([correct, ...distractors]) };
     });
   }
