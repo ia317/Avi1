@@ -55,20 +55,23 @@
     }
 
     .mute-btn {
-      background: #f5f5f5;
-      border: 1.5px solid #e0e0e0;
-      border-radius: 50%;
-      width: 36px;
-      height: 36px;
-      font-size: 18px;
+      background: #f0f0f0;
+      border: 2px solid #ccc;
+      border-radius: 20px;
+      padding: 5px 12px;
+      font-size: 13px;
+      font-weight: 600;
       cursor: pointer;
       display: flex;
       align-items: center;
-      justify-content: center;
-      transition: background 0.15s, transform 0.1s;
+      gap: 4px;
+      color: #555;
+      font-family: 'Segoe UI', sans-serif;
+      transition: background 0.15s, border-color 0.15s, transform 0.1s;
+      white-space: nowrap;
     }
-    .mute-btn:hover { background: #ffe0b2; border-color: #f7971e; transform: scale(1.1); }
-    .mute-btn.muted { background: #fdecea; border-color: #f44336; }
+    .mute-btn:hover { background: #ffe0b2; border-color: #f7971e; color: #c76b00; transform: scale(1.05); }
+    .mute-btn.muted { background: #fdecea; border-color: #f44336; color: #c62828; }
 
     .score-badge {
       background: #fff3cd;
@@ -356,7 +359,7 @@
 <div class="card">
   <div class="top-bar">
     <span id="q-num">שאלה 1 / 10</span>
-    <button class="mute-btn" id="mute-btn" onclick="toggleMute()" title="השתק / הפעל">🔊</button>
+    <button class="mute-btn" id="mute-btn" onclick="toggleMute()">🔊 <span id="mute-label">צליל</span></button>
     <span class="score-badge">✅ <span id="score">0</span>/<span id="score-total">15</span></span>
   </div>
 
@@ -441,8 +444,9 @@
   function toggleMute() {
     isMuted = !isMuted;
     const btn = document.getElementById('mute-btn');
-    btn.textContent = isMuted ? '🔇' : '🔊';
     btn.classList.toggle('muted', isMuted);
+    document.getElementById('mute-label').textContent = isMuted ? 'שקט' : 'צליל';
+    btn.childNodes[0].textContent = isMuted ? '🔇 ' : '🔊 ';
     if (isMuted) {
       window.speechSynthesis.cancel();
       cheerAudio.pause();
