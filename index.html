@@ -9,15 +9,51 @@
 
     body {
       font-family: 'Segoe UI', sans-serif;
-      background: linear-gradient(135deg, #f7971e, #ffd200);
+      background: linear-gradient(160deg, #ff9de2 0%, #ffb347 25%, #ffe066 50%, #7de8a0 75%, #74cfff 100%);
+      background-size: 300% 300%;
+      animation: bgShift 8s ease infinite alternate;
       min-height: 100vh;
       display: flex;
       align-items: center;
       justify-content: center;
+      overflow: hidden;
+    }
+
+    @keyframes bgShift {
+      0%   { background-position: 0% 50%; }
+      100% { background-position: 100% 50%; }
+    }
+
+    /* Floating fruit decorations */
+    body::before, body::after {
+      content: '🍎🍌🍊🍓🍇🍍🥝🍑';
+      position: fixed;
+      font-size: 36px;
+      opacity: 0.18;
+      white-space: nowrap;
+      letter-spacing: 28px;
+      pointer-events: none;
+      z-index: 0;
+      line-height: 3;
+    }
+    body::before {
+      top: 2%; left: -10%;
+      animation: floatRow 18s linear infinite;
+    }
+    body::after {
+      bottom: 2%; left: -10%;
+      animation: floatRow 22s linear infinite reverse;
+      content: '🍋🍒🥭🍐🫐🍈🥑🍉';
+    }
+    @keyframes floatRow {
+      from { transform: translateX(0); }
+      to   { transform: translateX(30vw); }
     }
 
     .card {
       background: white;
+      position: relative;
+      z-index: 1;
       border-radius: 24px;
       padding: 36px;
       width: 500px;
