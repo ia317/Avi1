@@ -88,6 +88,23 @@
       color: #888;
     }
 
+    .top-home-btn {
+      background: #f0f0f0;
+      border: 2px solid #ddd;
+      border-radius: 50%;
+      width: 36px;
+      height: 36px;
+      font-size: 18px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: background 0.15s, border-color 0.15s, transform 0.1s;
+      flex-shrink: 0;
+    }
+    .top-home-btn:hover  { background: #e3f2fd; border-color: #1e88e5; transform: scale(1.1); }
+    .top-home-btn:active { transform: scale(0.93); }
+
     .mute-btn {
       background: #f0f0f0;
       border: 2px solid #ccc;
@@ -320,6 +337,7 @@
   <!-- GAME AREA -->
   <div id="game-area" style="display:none">
     <div class="top-bar">
+      <button class="top-home-btn" onclick="goHome()" title="Home">🏠</button>
       <span id="q-num">שאלה 1 / 15</span>
       <button class="mute-btn" id="mute-btn" onclick="toggleMute()">🔊 <span id="mute-label">צליל / Sound</span></button>
       <span class="score-badge">✅ <span id="score">0</span>/15</span>
