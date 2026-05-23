@@ -553,6 +553,14 @@
     }));
   }
 
+  // Any key or mouse click while popup is open skips to next question
+  document.addEventListener('keydown', () => {
+    if (document.getElementById('popup').classList.contains('show')) {
+      clearTimeout(popupTimer);
+      closePopup();
+    }
+  });
+
   // Keep Chrome's speech engine alive between questions
   setInterval(() => {
     if (!window.speechSynthesis.speaking) {
