@@ -1,17 +1,2 @@
-{
-  "hooks": {
-    "PostToolUse": [
-      {
-        "matcher": "Write|Edit",
-        "hooks": [
-          {
-            "type": "command",
-            "command": "cd 'c:/Users/idana/Documents/Avi1' && git add -A && (git diff --cached --quiet || (git commit -m 'Auto-update' && git push origin master))",
-            "timeout": 30
-          }
-        ]
-      }
-    ]
-  }
-}
+{}
 

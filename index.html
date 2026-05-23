@@ -357,7 +357,7 @@
   <div class="top-bar">
     <span id="q-num">שאלה 1 / 10</span>
     <button class="mute-btn" id="mute-btn" onclick="toggleMute()" title="השתק / הפעל">🔊</button>
-    <span class="score-badge">⭐ <span id="score">0</span></span>
+    <span class="score-badge">✅ <span id="score">0</span>/<span id="score-total">15</span></span>
   </div>
 
   <h1>חידון פירות</h1>
@@ -641,6 +641,7 @@
       btn.classList.add('correct');
       score++;
       document.getElementById('score').textContent = score;
+      document.getElementById('score-total').textContent = idx + 1;
       launchConfetti();
       if (!isMuted) playCheer();
     } else {
