@@ -9,9 +9,7 @@
 
     body {
       font-family: 'Segoe UI', sans-serif;
-      background: linear-gradient(160deg, #ff9de2 0%, #ffb347 25%, #ffe066 50%, #7de8a0 75%, #74cfff 100%);
-      background-size: 300% 300%;
-      animation: bgShift 8s ease infinite alternate;
+      background: #ffffff;
       min-height: 100vh;
       display: flex;
       align-items: center;
@@ -19,35 +17,20 @@
       overflow: hidden;
     }
 
-    @keyframes bgShift {
-      0%   { background-position: 0% 50%; }
-      100% { background-position: 100% 50%; }
-    }
-
-    /* Floating fruit decorations */
-    body::before, body::after {
-      content: '🍎🍌🍊🍓🍇🍍🥝🍑';
+    /* Floating fruit emojis */
+    .bg-fruit {
       position: fixed;
-      font-size: 36px;
-      opacity: 0.18;
-      white-space: nowrap;
-      letter-spacing: 28px;
+      font-size: 38px;
+      opacity: 0;
       pointer-events: none;
       z-index: 0;
-      line-height: 3;
+      animation: floatUp linear infinite;
     }
-    body::before {
-      top: 2%; left: -10%;
-      animation: floatRow 18s linear infinite;
-    }
-    body::after {
-      bottom: 2%; left: -10%;
-      animation: floatRow 22s linear infinite reverse;
-      content: '🍋🍒🥭🍐🫐🍈🥑🍉';
-    }
-    @keyframes floatRow {
-      from { transform: translateX(0); }
-      to   { transform: translateX(30vw); }
+    @keyframes floatUp {
+      0%   { transform: translateY(105vh) rotate(0deg);   opacity: 0; }
+      10%  { opacity: 0.13; }
+      90%  { opacity: 0.13; }
+      100% { transform: translateY(-15vh) rotate(25deg);  opacity: 0; }
     }
 
     .card {
@@ -727,6 +710,20 @@
 
   buildQuestions();
   renderQuestion();
+
+  // Floating background fruits
+  const bgFruits = ['🍎','🍌','🍊','🍓','🍇','🍍','🥝','🍑','🍋','🍒','🥭','🍐','🫐','🍉','🥑'];
+  bgFruits.forEach((emoji, i) => {
+    const el = document.createElement('div');
+    el.className = 'bg-fruit';
+    el.textContent = emoji;
+    el.style.left = (5 + (i / bgFruits.length) * 90) + 'vw';
+    el.style.fontSize = (28 + Math.random() * 22) + 'px';
+    const dur = 12 + Math.random() * 10;
+    el.style.animationDuration = dur + 's';
+    el.style.animationDelay = -(Math.random() * dur) + 's';
+    document.body.appendChild(el);
+  });
 </script>
 </body>
 </html>
