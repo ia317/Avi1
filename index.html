@@ -437,7 +437,10 @@
     <div class="top-bar">
       <button class="top-home-btn" onclick="goHome()" title="Home">🏠</button>
       <span id="q-num">שאלה 1 / 15</span>
-      <button class="mute-btn" id="mute-btn" onclick="toggleMute()">🔊 <span id="mute-label">צליל / Sound</span></button>
+      <div style="display:flex;flex-direction:column;gap:5px;align-items:flex-end">
+        <button class="mute-btn" id="mute-btn" onclick="toggleMute()">🔊 <span id="mute-label">צליל / Sound</span></button>
+        <button class="theme-btn" id="theme-btn" onclick="toggleTheme()">🌙</button>
+      </div>
       <span class="score-badge">✅ <span id="score">0</span>/15</span>
     </div>
 
