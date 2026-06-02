@@ -597,6 +597,13 @@
   let currentWord = '', currentHebWord = '';
   let popupTimer = null;
   let bgElements = [];
+  let isDark = false;
+
+  function toggleTheme() {
+    isDark = !isDark;
+    document.body.classList.toggle('dark', isDark);
+    document.getElementById('theme-btn').textContent = isDark ? '☀️' : '🌙';
+  }
 
   // ── AUDIO ─────────────────────────────────────────────────────────
   const cheerAudio = new Audio('cheer.mp3');
