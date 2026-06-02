@@ -801,6 +801,42 @@
     });
   }
 
+  function floatToCenter(btn) {
+    const card = document.querySelector('.card');
+    const cardRect = card.getBoundingClientRect();
+    const btnRect = btn.getBoundingClientRect();
+
+    const clone = btn.cloneNode(true);
+    const scale = 1.55;
+    const btnCX = btnRect.left + btnRect.width / 2;
+    const btnCY = btnRect.top  + btnRect.height / 2;
+    const targetCX = cardRect.left + cardRect.width / 2;
+    const targetCY = cardRect.top  + cardRect.height * 0.4;
+    const dx = targetCX - btnCX;
+    const dy = targetCY - btnCY;
+
+    clone.style.cssText = `
+      position:fixed; left:${btnRect.left}px; top:${btnRect.top}px;
+      width:${btnRect.width}px; height:${btnRect.height}px;
+      z-index:200; pointer-events:none; margin:0;
+      opacity:0; transform:scale(1);
+      box-shadow:0 12px 36px rgba(76,175,80,0.55);
+      border-radius:14px;
+    `;
+    document.body.appendChild(clone);
+
+    clone.getBoundingClientRect(); // force reflow
+    clone.style.transition = 'opacity 0.22s ease, transform 0.52s cubic-bezier(0.34,1.56,0.64,1)';
+    clone.style.opacity = '1';
+    clone.style.transform = `translate(${dx}px, ${dy}px) scale(${scale})`;
+
+    setTimeout(() => {
+      clone.style.transition = 'opacity 0.35s ease';
+      clone.style.opacity = '0';
+      setTimeout(() => clone.remove(), 380);
+    }, 1400);
+  }
+
   function pick(btn, chosen, correct, correctEn, correctPh) {
     document.querySelectorAll('.opt').forEach(b => b.disabled = true);
     const isCorrect = chosen === correct;
