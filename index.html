@@ -725,6 +725,9 @@
         if (b.dataset.name === correct) b.classList.add('correct');
       });
     }
+    document.querySelectorAll('.opt').forEach(b => {
+      if (b.dataset.name === correct) b.classList.add('reveal');
+    });
 
     document.getElementById('popup-icon').textContent    = isCorrect ? '✅' : '❌';
     document.getElementById('popup-result').textContent  = isCorrect ? 'נכון!' : 'לא נכון';
