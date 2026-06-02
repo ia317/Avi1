@@ -74,25 +74,28 @@
 
     /* ── DARK/LIGHT TOGGLE ── */
     .theme-btn {
-      position: fixed;
-      top: 14px;
-      right: 14px;
-      width: 38px;
-      height: 38px;
-      border-radius: 50%;
+      width: 34px;
+      height: 22px;
+      border-radius: 11px;
       border: 2px solid var(--top-btn-border);
       background: var(--top-btn-bg);
-      font-size: 18px;
+      font-size: 13px;
       cursor: pointer;
       display: flex;
       align-items: center;
       justify-content: center;
-      z-index: 200;
       transition: background 0.2s, border-color 0.2s, transform 0.15s;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+      flex-shrink: 0;
+      align-self: flex-end;
     }
-    .theme-btn:hover  { transform: scale(1.12); }
+    .theme-btn:hover  { transform: scale(1.12); border-color: #f7971e; }
     .theme-btn:active { transform: scale(0.93); }
+    /* home-screen float */
+    .theme-btn-home {
+      position: absolute;
+      top: 14px;
+      left: 14px;
+    }
 
     .bg-fruit {
       position: fixed;
