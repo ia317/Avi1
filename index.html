@@ -819,32 +819,34 @@
     }
     setTimeout(() => {
       document.querySelectorAll('.opt').forEach(b => {
-        if (b.dataset.name === correct) b.classList.add('reveal');
+        if (b.dataset.name === correct) floatToCenter(b);
       });
     }, 80);
 
-    document.getElementById('popup-icon').textContent    = isCorrect ? '✅' : '❌';
-    document.getElementById('popup-result').textContent  = isCorrect ? 'נכון!' : 'לא נכון';
-    document.getElementById('popup-result').className    = 'popup-result ' + (isCorrect ? 'ok' : 'err');
-    document.getElementById('popup-hebrew').textContent  = correct;
-    document.getElementById('popup-english').textContent = correctEn;
-    document.getElementById('popup-phonetic').textContent = correctPh;
-    currentWord = correctEn;
-    currentHebWord = correct;
+    setTimeout(() => {
+      document.getElementById('popup-icon').textContent    = isCorrect ? '✅' : '❌';
+      document.getElementById('popup-result').textContent  = isCorrect ? 'נכון!' : 'לא נכון';
+      document.getElementById('popup-result').className    = 'popup-result ' + (isCorrect ? 'ok' : 'err');
+      document.getElementById('popup-hebrew').textContent  = correct;
+      document.getElementById('popup-english').textContent = correctEn;
+      document.getElementById('popup-phonetic').textContent = correctPh;
+      currentWord = correctEn;
+      currentHebWord = correct;
 
-    document.getElementById('popup').classList.add('show');
+      document.getElementById('popup').classList.add('show');
 
-    if (isCorrect) {
-      if (!isMuted) setTimeout(() => speakSequence(correct, correctEn), 600);
-    } else {
-      if (!isMuted) setTimeout(() => {
-        doSpeak(correct, getHebrewFemaleVoice(), 'he-IL', 0.78, null);
-        setTimeout(() => doSpeak(correctEn, getVoice(), 'en-US', 0.75, null), 900 + correct.length * 320);
-      }, 500);
-    }
+      if (isCorrect) {
+        if (!isMuted) setTimeout(() => speakSequence(correct, correctEn), 600);
+      } else {
+        if (!isMuted) setTimeout(() => {
+          doSpeak(correct, getHebrewFemaleVoice(), 'he-IL', 0.78, null);
+          setTimeout(() => doSpeak(correctEn, getVoice(), 'en-US', 0.75, null), 900 + correct.length * 320);
+        }, 500);
+      }
 
-    clearTimeout(popupTimer);
-    popupTimer = setTimeout(closePopup, DELAY);
+      clearTimeout(popupTimer);
+      popupTimer = setTimeout(closePopup, DELAY);
+    }, 520);
   }
 
   function closePopup() {
