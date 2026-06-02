@@ -7,15 +7,93 @@
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
 
+    :root {
+      --body-bg: #ffffff;
+      --card-bg: #ffffff;
+      --card-shadow: rgba(0,0,0,0.18);
+      --text-main: #222;
+      --text-sub: #888;
+      --text-faint: #bbb;
+      --opt-bg: #ffffff;
+      --opt-border: #e0e0e0;
+      --opt-text: #333;
+      --opt-hover-bg: #fff8ee;
+      --opt-hover-border: #f7971e;
+      --score-bg: #fff3cd;
+      --score-color: #d68000;
+      --top-btn-bg: #f0f0f0;
+      --top-btn-border: #ddd;
+      --popup-bg: #ffffff;
+      --popup-hebrew: #222;
+      --popup-english: #888;
+      --timer-bg: #eee;
+      --result-msg: #444;
+      --home-btn-bg: #f5f5f5;
+      --home-btn-border: #ddd;
+      --home-btn-color: #555;
+      --version-color: #ddd;
+      --dedication-color: #bbb;
+    }
+    body.dark {
+      --body-bg: #13131f;
+      --card-bg: #1e1e2e;
+      --card-shadow: rgba(0,0,0,0.55);
+      --text-main: #f0f0f0;
+      --text-sub: #aaa;
+      --text-faint: #666;
+      --opt-bg: #2a2a3c;
+      --opt-border: #3a3a52;
+      --opt-text: #e8e8e8;
+      --opt-hover-bg: #2e2820;
+      --opt-hover-border: #f7971e;
+      --score-bg: #2e2610;
+      --score-color: #f7c948;
+      --top-btn-bg: #2a2a3c;
+      --top-btn-border: #3a3a52;
+      --popup-bg: #1e1e2e;
+      --popup-hebrew: #f0f0f0;
+      --popup-english: #aaa;
+      --timer-bg: #2a2a3c;
+      --result-msg: #ccc;
+      --home-btn-bg: #2a2a3c;
+      --home-btn-border: #3a3a52;
+      --home-btn-color: #ccc;
+      --version-color: #444;
+      --dedication-color: #555;
+    }
+
     body {
       font-family: 'Segoe UI', sans-serif;
-      background: #ffffff;
+      background: var(--body-bg);
       min-height: 100vh;
       display: flex;
       align-items: center;
       justify-content: center;
       overflow: hidden;
+      transition: background 0.3s;
     }
+
+    /* ── DARK/LIGHT TOGGLE ── */
+    .theme-btn {
+      position: fixed;
+      top: 14px;
+      left: 14px;
+      width: 38px;
+      height: 38px;
+      border-radius: 50%;
+      border: 2px solid var(--top-btn-border);
+      background: var(--top-btn-bg);
+      font-size: 18px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 200;
+      transition: background 0.2s, border-color 0.2s, transform 0.15s;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+    }
+    .theme-btn:hover  { transform: scale(1.12); }
+    .theme-btn:active { transform: scale(0.93); }
 
     .bg-fruit {
       position: fixed;
